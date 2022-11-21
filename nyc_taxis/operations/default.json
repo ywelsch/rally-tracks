@@ -801,5 +801,75 @@
           "add_task_parallelism_above_query" : true
         }
       }
+    },
+    {
+      "name": "grouped_passenger_count_aggregation",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "group_by_dropoff_datetime": {
+            "terms": {
+              "field": "dropoff_datetime"
+            },
+            "aggs": {
+              "passengers": {
+                "value_count" : {
+                  "field": "passenger_count"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "grouped_passenger_count_esql_shard_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats count(passenger_count) by dropoff_datetime",
+        "pragma" : {
+          "data_partitioning" : "shard"
+        }
+      }
+    },
+    {
+      "name": "grouped_passenger_count_esql_segment_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats count(passenger_count) by dropoff_datetime",
+        "pragma" : {
+          "data_partitioning" : "segment"
+        }
+      }
+    },
+    {
+      "name": "grouped_passenger_count_esql_doc_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats count(passenger_count) by dropoff_datetime",
+        "pragma" : {
+          "data_partitioning" : "doc"
+        }
+      }
+    },
+    {
+      "name": "grouped_passenger_count_esql_shard_partitioning_with_task_parallelism",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats count(passenger_count) by dropoff_datetime",
+        "pragma" : {
+          "data_partitioning" : "shard",
+          "add_task_parallelism_above_query" : true
+        }
+      }
     }
 
